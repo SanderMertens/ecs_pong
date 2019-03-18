@@ -1,0 +1,20 @@
+{
+    "id": "ecs_pong",
+    "type": "application",
+    "value": {
+        "author": "Sander Mertens",
+        "description": "Pong in flecs ECS",
+        "use": [
+            "flecs",
+            "flecs.math",
+            "flecs.components.transform",
+            "flecs.components.physics",
+            "flecs.components.geometry",
+            "flecs.components.graphics",
+            "flecs.components.input",
+            "flecs.systems.transform",
+            "flecs.systems.physics",
+            "flecs.systems.sdl2"
+        ]
+   }
+}
