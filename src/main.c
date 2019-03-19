@@ -128,6 +128,9 @@ void BounceWalls(EcsRows *rows) {
 int main(int argc, char *argv[]) {
     EcsWorld *world = ecs_init();
 
+    /* Modules are split up in components and systems. This makes it easy to swap
+     * systems, like using a custom renderer. As long as the new renderer still
+     * uses the same datatypes (components) the application can stay the same */
     ECS_IMPORT(world, EcsComponentsTransform, ECS_2D);  /* EcsPosition2D */
     ECS_IMPORT(world, EcsComponentsPhysics, ECS_2D);    /* EcsVelocity2D, EcsCollider */
     ECS_IMPORT(world, EcsComponentsGeometry, ECS_2D);   /* EcsCircle, EcsRectangle */
