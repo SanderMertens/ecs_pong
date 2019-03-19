@@ -62,7 +62,7 @@ You may notice that systems use different functions (`ecs_column`, `ecs_field`) 
 The `ecs_field` function provides a convenient way to abstract away from the differences between shared components and owned components. When a system uses `ecs_field`, it can be written in a way that is agnostic to how the components are stored in memory, at the cost of some performance (though not a lot). Flecs lets you test whether a component is shared or not, and thus it is theoretically possible to support versions of a system optimized for each usecase. For this demo though, performance is more than sufficient.
 
 ## Optimizing the critical path
-While the ability to quickly import modules and leverage existing functionality is great, you also potentially load some systems that the application may not require. For this demo for example, there are a whole lot of them, from rotation shapes (not used), to velocity based movements (entities don't have velocity) and things like custom camera's.
+While the ability to quickly import modules and leverage existing functionality is great, you also potentially load some systems that the application may not require. For this demo for example, there are a whole lot of them, from rotation shapes (not used) and things like custom camera's.
 
 To prevent these unused systems from hogging CPU cycles, flecs removes them from the main loop completely. It does this by automatically enabling/disabling systems based on how many entities they match with. If a system matches with 0 entities, it will be disabled will not be evaluated in the main loop. This ensures that you only pay for what you need, without having to explicitly enable/disable systems in your application.
 
