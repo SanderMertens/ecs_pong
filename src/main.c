@@ -18,17 +18,20 @@ void compute_bounce(
     EcsPosition2D *p_player,
     EcsVelocity2D *v_ball)
 {
+    /* The sharpness of the angle is determined by where the ball hits the paddle */
     double angle = PADDLE_AIM_C * (p_ball->x - p_player->x) / PLAYER_WIDTH;
     float abs_angle = fabs(angle);
 
     v_ball->x = sin(angle) * BALL_SPEED
     v_ball->y = cos(angle) * BALL_SPEED;
     
+    /* If the angle exceeds a magic value, the ball gets an extra speed boost */
     if (abs_angle > 0.6) {
         v_ball->x *= (1 + abs_angle * BALL_BOOST);
         v_ball->y *= (1 + abs_angle * BALL_BOOST);
     }
 
+    /* Determine the direction in which the ball should go */
     if (p_ball->y < p_player->y) {
         v_ball->y *= -1;
     }
@@ -36,7 +39,7 @@ void compute_bounce(
 
 void PlayerInput(EcsRows *rows) {
     /* ecs_field(rows, type, row, column) - this is a function that retrieves system
-     * data in a way that is agnostic to whether the component is shared or not. This
+     * data from a component regardless of whether the component is owned or shared.  This
      * enables systems to be written in a way that is agnostic to, for example, if a
      * component is from a prefab or whether it is owned by the entity. 
      * The column argument refers to where in the system expression the argument
@@ -125,14 +128,14 @@ void BounceWalls(EcsRows *rows) {
 int main(int argc, char *argv[]) {
     EcsWorld *world = ecs_init();
 
-    ECS_IMPORT(world, EcsComponentsTransform, ECS_2D);
-    ECS_IMPORT(world, EcsComponentsPhysics, ECS_2D);
-    ECS_IMPORT(world, EcsComponentsGeometry, ECS_2D);
-    ECS_IMPORT(world, EcsComponentsGraphics, ECS_2D);
-    ECS_IMPORT(world, EcsComponentsInput, ECS_2D);
-    ECS_IMPORT(world, EcsSystemsSdl2, ECS_2D);
-    ECS_IMPORT(world, EcsSystemsTransform, ECS_2D);
-    ECS_IMPORT(world, EcsSystemsPhysics, ECS_2D);
+    ECS_IMPORT(world, EcsComponentsTransform, ECS_2D);  /* EcsPosition2D */
+    ECS_IMPORT(world, EcsComponentsPhysics, ECS_2D);    /* EcsVelocity2D, EcsCollider */
+    ECS_IMPORT(world, EcsComponentsGeometry, ECS_2D);   /* EcsCircle, EcsRectangle */
+    ECS_IMPORT(world, EcsComponentsGraphics, ECS_2D);   /* EcsCanvas2D */
+    ECS_IMPORT(world, EcsComponentsInput, ECS_2D);      /* EcsInput */
+    ECS_IMPORT(world, EcsSystemsSdl2, ECS_2D);          /* Rendering */
+    ECS_IMPORT(world, EcsSystemsTransform, ECS_2D);     /* Matrix transformations */
+    ECS_IMPORT(world, EcsSystemsPhysics, ECS_2D);       /* Collision detection, movement */
 
     /* Register target component and paddle prefab. Prefabs enable sharing
      * common components between entities, like geometry (EcsRectangle) */
@@ -141,8 +144,8 @@ int main(int argc, char *argv[]) {
     ecs_set(world, PaddlePrefab, EcsRectangle, {.width = PLAYER_WIDTH, .height = PLAYER_HEIGHT});
     ecs_set(world, PaddlePrefab, Target, {0});
     
-    /* Create game entities, add them to canvas. Override the target component
-     * from the prefab, which will copy the initialized value to the entity */
+    /* Create game entities. Override the target component from the prefab, 
+     * which will copy the initialized value to the entity */
     ECS_ENTITY(world, Ball, EcsCollider);
     ECS_ENTITY(world, Player, PaddlePrefab, Target);
     ECS_ENTITY(world, AI, PaddlePrefab, Target);
@@ -170,5 +173,6 @@ int main(int argc, char *argv[]) {
     ecs_set_target_fps(world, 60);
     while (ecs_progress(world, 0)) { }
 
+    /* Cleanup resources */
     return ecs_fini(world);
 }
