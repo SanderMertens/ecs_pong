@@ -77,7 +77,7 @@ void MovePaddle(EcsRows *rows) {
     EcsPosition2D *p = ecs_column(rows, EcsPosition2D, 1);
     Target *target = ecs_column(rows, Target, 2);
 
-    for (int i = rows->begin; i < rows->end; i ++) {
+    for (int i = 0; i < rows->count; i ++) {
         float abs_target = fabs(target[i]);
         float dir = abs_target / target[i];
         p[i].x += (abs_target > PLAYER_SPEED) ? PLAYER_SPEED * dir : target[i]; /* Move the paddle towards the target */
@@ -97,7 +97,7 @@ void Collision(EcsRows *rows) {
     EcsPosition2D *p_ball = ecs_shared(rows, EcsPosition2D, 2);
     EcsVelocity2D *v_ball = ecs_shared(rows, EcsVelocity2D, 3);
 
-    for (int i = rows->begin; i < rows->end; i ++) {
+    for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
         p_ball->y += c[i].normal.y * c[i].distance;
 
@@ -111,7 +111,7 @@ void BounceWalls(EcsRows *rows) {
     EcsPosition2D *p = ecs_column(rows, EcsPosition2D, 1);
     EcsVelocity2D *v = ecs_column(rows, EcsVelocity2D, 2);
 
-    for (int i = rows->begin; i < rows->end; i ++) {
+    for (int i = 0; i < rows->count; i ++) {
         if (ecs_clamp(&p[i].x, -COURT_WIDTH + BALL_RADIUS, COURT_WIDTH - BALL_RADIUS)) {
             v->x *= -1.0; /* Reverse x velocity if ball hits a vertical wall */
         }
@@ -131,6 +131,7 @@ int main(int argc, char *argv[]) {
     /* Modules are split up in components and systems. This makes it easy to swap
      * systems, like using a custom renderer. As long as the new renderer still
      * uses the same datatypes (components) the application can stay the same */
+    
     ECS_IMPORT(world, EcsComponentsTransform, ECS_2D);  /* EcsPosition2D */
     ECS_IMPORT(world, EcsComponentsPhysics, ECS_2D);    /* EcsVelocity2D, EcsCollider */
     ECS_IMPORT(world, EcsComponentsGeometry, ECS_2D);   /* EcsCircle, EcsRectangle */
