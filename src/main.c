@@ -22,7 +22,7 @@ void compute_bounce(
     double angle = PADDLE_AIM_C * (p_ball->x - p_player->x) / PLAYER_WIDTH;
     float abs_angle = fabs(angle);
 
-    v_ball->x = sin(angle) * BALL_SPEED
+    v_ball->x = sin(angle) * BALL_SPEED;
     v_ball->y = cos(angle) * BALL_SPEED;
     
     /* If the angle exceeds a magic value, the ball gets an extra speed boost */
@@ -37,7 +37,7 @@ void compute_bounce(
     }
 }
 
-void PlayerInput(EcsRows *rows) {
+void PlayerInput(ecs_rows_t *rows) {
     /* ecs_field(rows, type, row, column) - this is a function that retrieves system
      * data from a component regardless of whether the component is owned or shared.  This
      * enables systems to be written in a way that is agnostic to, for example, if a
@@ -56,7 +56,7 @@ void PlayerInput(EcsRows *rows) {
     }
 }
 
-void AiThink(EcsRows *rows) {
+void AiThink(ecs_rows_t *rows) {
     EcsPosition2D *ball_pos = ecs_field(rows, EcsPosition2D, 0, 1);
     EcsPosition2D *player_pos = ecs_field(rows, EcsPosition2D, 0, 2);
     EcsPosition2D *ai_pos = ecs_field(rows, EcsPosition2D, 0, 3);
@@ -70,7 +70,7 @@ void AiThink(EcsRows *rows) {
     *ecs_field(rows, Target, 0, 4) = target_x - ai_pos->x;
 }
 
-void MovePaddle(EcsRows *rows) {
+void MovePaddle(ecs_rows_t *rows) {
     /* ecs_column(rows, type, column) - this function returns a raw array which
      * the system can iterate over. This function should only be used if the
      * system is certain that the component is owned by the entities. */
@@ -85,7 +85,7 @@ void MovePaddle(EcsRows *rows) {
     }
 }
 
-void Collision(EcsRows *rows) {
+void Collision(ecs_rows_t *rows) {
     EcsCollision2D *c = ecs_column(rows, EcsCollision2D, 1);
     /* ecs_column_type(rows, column) - This function obtains a type (component) 
      * handle from a column. In flecs components must be set with their specific
@@ -107,7 +107,7 @@ void Collision(EcsRows *rows) {
     }
 }
 
-void BounceWalls(EcsRows *rows) {
+void BounceWalls(ecs_rows_t *rows) {
     EcsPosition2D *p = ecs_column(rows, EcsPosition2D, 1);
     EcsVelocity2D *v = ecs_column(rows, EcsVelocity2D, 2);
 
@@ -126,7 +126,7 @@ void BounceWalls(EcsRows *rows) {
 }
 
 int main(int argc, char *argv[]) {
-    EcsWorld *world = ecs_init();
+    ecs_world_t *world = ecs_init();
 
     /* Modules are split up in components and systems. This makes it easy to swap
      * systems, like using a custom renderer. As long as the new renderer still
