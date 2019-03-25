@@ -91,7 +91,7 @@ void Collision(ecs_rows_t *rows) {
      * handle from a column. In flecs components must be set with their specific
      * handles. Most of the time this happens automatically, but in this system
      * we need the EcsPosition2D handle to be able to use it with ecs_get_ptr. */
-    EcsType TEcsPosition2D = ecs_column_type(rows, 2); 
+    ecs_type_t TEcsPosition2D = ecs_column_type(rows, 2); 
 
     /* There is only one ball which it has been passed in as a single (shared) component */
     EcsPosition2D *p_ball = ecs_shared(rows, EcsPosition2D, 2);
