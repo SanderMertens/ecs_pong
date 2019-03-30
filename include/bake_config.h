@@ -17,6 +17,10 @@
 #ifndef ECS_PONG_BAKE_CONFIG_H
 #define ECS_PONG_BAKE_CONFIG_H
 
+/* Generated includes are specific to the bake environment. If a project is not
+ * built with bake, it will have to provide alternative methods for including
+ * its dependencies. */
+#ifdef __BAKE__
 /* Headers of public dependencies */
 #include <flecs>
 #include <flecs.math>
@@ -33,16 +37,21 @@
 #ifdef ECS_PONG_IMPL
 /* No dependencies */
 #endif
+#endif
 
 /* Convenience macro for exporting symbols */
-#if ECS_PONG_IMPL && defined _MSC_VER
-#define ECS_PONG_EXPORT __declspec(dllexport)
-#elif ECS_PONG_IMPL
-#define ECS_PONG_EXPORT __attribute__((__visibility__("default")))
-#elif defined _MSC_VER
-#define ECS_PONG_EXPORT __declspec(dllimport)
+#ifndef ECS_PONG_STATIC
+  #if ECS_PONG_IMPL && defined _MSC_VER
+    #define ECS_PONG_EXPORT __declspec(dllexport)
+  #elif ECS_PONG_IMPL
+    #define ECS_PONG_EXPORT __attribute__((__visibility__("default")))
+  #elif defined _MSC_VER
+    #define ECS_PONG_EXPORT __declspec(dllimport)
+  #else
+    #define ECS_PONG_EXPORT
+  #endif
 #else
-#define ECS_PONG_EXPORT
+  #define ECS_PONG_EXPORT
 #endif
 
 #endif

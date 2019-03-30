@@ -99,7 +99,7 @@ void Collision(ecs_rows_t *rows) {
 
     for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
-        p_ball->y += c[i].normal.y * c[i].distance;
+        p_ball->y -= c[i].normal.y * c[i].distance;
 
         /* Use the player position to determine where the ball hit the paddle */
         EcsPosition2D *p_player = ecs_get_ptr(rows->world, c[i].entity_2, EcsPosition2D);
@@ -126,7 +126,7 @@ void BounceWalls(ecs_rows_t *rows) {
 }
 
 int main(int argc, char *argv[]) {
-    ecs_world_t *world = ecs_init();
+    ecs_world_t *world = ecs_init_w_args(argc, argv);
 
     /* Modules are split up in components and systems. This makes it easy to swap
      * systems, like using a custom renderer. As long as the new renderer still
@@ -155,12 +155,12 @@ int main(int argc, char *argv[]) {
     ECS_ENTITY(world, AI, PaddlePrefab, Target);
 
     /* Handle player (keyboard) input and AI */
-    ECS_SYSTEM(world, PlayerInput, EcsOnFrame, EcsInput, Player.Target);
-    ECS_SYSTEM(world, AiThink, EcsOnFrame, EcsPosition2D, Player.EcsPosition2D, AI.EcsPosition2D, AI.Target, !PaddlePrefab);
+    ECS_SYSTEM(world, PlayerInput, EcsOnUpdate, EcsInput, Player.Target);
+    ECS_SYSTEM(world, AiThink, EcsOnUpdate, EcsPosition2D, Player.EcsPosition2D, AI.EcsPosition2D, AI.Target, !PaddlePrefab);
 
     /* Bounce ball off the walls, move paddles to targets, and detect collisions */
-    ECS_SYSTEM(world, BounceWalls, EcsOnFrame, EcsPosition2D, EcsVelocity2D, !PaddlePrefab);
-    ECS_SYSTEM(world, MovePaddle, EcsOnFrame, EcsPosition2D, Target, PaddlePrefab);
+    ECS_SYSTEM(world, BounceWalls, EcsOnUpdate, EcsPosition2D, EcsVelocity2D, !PaddlePrefab);
+    ECS_SYSTEM(world, MovePaddle, EcsOnUpdate, EcsPosition2D, Target, PaddlePrefab);
     ECS_SYSTEM(world, Collision, EcsOnSet, EcsCollision2D, Ball.EcsPosition2D, Ball.EcsVelocity2D);
 
     /* Initialize starting positions and ball velocity */
