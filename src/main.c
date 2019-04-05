@@ -3,9 +3,9 @@
 #define BALL_RADIUS (10)
 #define PLAYER_HEIGHT (15)
 #define PLAYER_WIDTH (100)
-#define PLAYER_SPEED (6.0)
+#define PLAYER_SPEED (400)
 #define PADDLE_AIM_C (1.5)
-#define BALL_SPEED (400.0)
+#define BALL_SPEED (430.0)
 #define BALL_SERVE_SPEED (BALL_SPEED / 3.0)
 #define BALL_BOOST (0.5)
 #define COURT_WIDTH (400)
@@ -80,7 +80,11 @@ void MovePaddle(ecs_rows_t *rows) {
     for (int i = 0; i < rows->count; i ++) {
         float abs_target = fabs(target[i]);
         float dir = abs_target / target[i];
-        p[i].x += (abs_target > PLAYER_SPEED) ? PLAYER_SPEED * dir : target[i]; /* Move the paddle towards the target */
+        
+        /* Move the paddle towards the target */
+        float movement = (abs_target > PLAYER_SPEED * rows->delta_time) ? PLAYER_SPEED * dir : target[i];
+        p[i].x += movement * rows->delta_time; 
+
         ecs_clamp(&p[i].x, -COURT_WIDTH, COURT_WIDTH); /* Keep the paddle in the court */
     }
 }
@@ -173,8 +177,8 @@ int main(int argc, char *argv[]) {
     /* Create drawing canvas by creating EcsCanvas2D component */
     ecs_set_singleton(world, EcsCanvas2D, {.window = {.width = 800, .height = 600}});
 
-    /* Run main loop at 60 FPS */
-    ecs_set_target_fps(world, 60);
+    ecs_set_target_fps(world, 120);
+
     while (ecs_progress(world, 0)) { }
 
     /* Cleanup resources */
