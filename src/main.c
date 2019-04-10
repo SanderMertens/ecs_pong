@@ -103,7 +103,7 @@ void Collision(ecs_rows_t *rows) {
 
     for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
-        p_ball->y -= c[i].normal.y * c[i].distance;
+        p_ball->y += c[i].normal.y * c[i].distance;
 
         /* Use the player position to determine where the ball hit the paddle */
         EcsPosition2D *p_player = ecs_get_ptr(rows->world, c[i].entity_2, EcsPosition2D);
