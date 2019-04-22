@@ -103,7 +103,8 @@ void Collision(ecs_rows_t *rows) {
 
     for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
-        p_ball->y += c[i].normal.y * c[i].distance;
+
+        p_ball->y -= c[i].normal.y * c[i].distance;
 
         /* Use the player position to determine where the ball hit the paddle */
         EcsPosition2D *p_player = ecs_get_ptr(rows->world, c[i].entity_2, EcsPosition2D);
@@ -136,14 +137,14 @@ int main(int argc, char *argv[]) {
      * systems, like using a custom renderer. As long as the new renderer still
      * uses the same datatypes (components) the application can stay the same */
     
-    ECS_IMPORT(world, EcsComponentsTransform, ECS_2D);  /* EcsPosition2D */
-    ECS_IMPORT(world, EcsComponentsPhysics, ECS_2D);    /* EcsVelocity2D, EcsCollider */
-    ECS_IMPORT(world, EcsComponentsGeometry, ECS_2D);   /* EcsCircle, EcsRectangle */
-    ECS_IMPORT(world, EcsComponentsGraphics, ECS_2D);   /* EcsCanvas2D */
-    ECS_IMPORT(world, EcsComponentsInput, ECS_2D);      /* EcsInput */
-    ECS_IMPORT(world, EcsSystemsSdl2, ECS_2D);          /* Rendering */
-    ECS_IMPORT(world, EcsSystemsTransform, ECS_2D);     /* Matrix transformations */
-    ECS_IMPORT(world, EcsSystemsPhysics, ECS_2D);       /* Collision detection, movement */
+    ECS_IMPORT(world, FlecsComponentsTransform, ECS_2D);  /* EcsPosition2D */
+    ECS_IMPORT(world, FlecsComponentsPhysics, ECS_2D);    /* EcsVelocity2D, EcsCollider */
+    ECS_IMPORT(world, FlecsComponentsGeometry, ECS_2D);   /* EcsCircle, EcsRectangle */
+    ECS_IMPORT(world, FlecsComponentsGraphics, ECS_2D);   /* EcsCanvas2D */
+    ECS_IMPORT(world, FlecsComponentsInput, ECS_2D);      /* EcsInput */
+    ECS_IMPORT(world, FlecsSystemsSdl2, ECS_2D);          /* Rendering */
+    ECS_IMPORT(world, FlecsSystemsTransform, ECS_2D);     /* Matrix transformations */
+    ECS_IMPORT(world, FlecsSystemsPhysics, ECS_2D);       /* Collision detection, movement */
 
     /* Register target component and paddle prefab. Prefabs enable sharing
      * common components between entities, like geometry (EcsRectangle) */
