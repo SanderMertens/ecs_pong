@@ -2,7 +2,7 @@
 #define ECS_PONG_H
 
 /* This generated file contains includes for project dependencies */
-#include "bake_config.h"
+#include <ecs_pong/bake_config.h>
 
 #ifdef __cplusplus
 extern "C" {

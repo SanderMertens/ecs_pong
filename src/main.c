@@ -1,4 +1,4 @@
-#include <include/ecs_pong.h>
+#include <ecs_pong.h>
 
 #define BALL_RADIUS (10)
 #define PLAYER_HEIGHT (15)
