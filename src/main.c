@@ -38,14 +38,14 @@ void compute_bounce(
 }
 
 void PlayerInput(ecs_rows_t *rows) {
-    /* ecs_field(rows, type, row, column) - this is a function that retrieves system
+    /* ecs_field(rows, type, column, row) - this is a function that retrieves system
      * data from a component regardless of whether the component is owned or shared.  This
      * enables systems to be written in a way that is agnostic to, for example, if a
      * component is from a prefab or whether it is owned by the entity. 
      * The column argument refers to where in the system expression the argument
      * is specified. */
-    EcsInput *input = ecs_field(rows, EcsInput, 0, 1); 
-    Target *target = ecs_field(rows, Target, 0, 2);
+    EcsInput *input = ecs_field(rows, EcsInput, 1, 0); 
+    Target *target = ecs_field(rows, Target, 2, 0);
 
     if (input->keys[ECS_KEY_A].state || input->keys[ECS_KEY_LEFT].state) {
         *target = -PLAYER_SPEED;
@@ -57,9 +57,9 @@ void PlayerInput(ecs_rows_t *rows) {
 }
 
 void AiThink(ecs_rows_t *rows) {
-    EcsPosition2D *ball_pos = ecs_field(rows, EcsPosition2D, 0, 1);
-    EcsPosition2D *player_pos = ecs_field(rows, EcsPosition2D, 0, 2);
-    EcsPosition2D *ai_pos = ecs_field(rows, EcsPosition2D, 0, 3);
+    EcsPosition2D *ball_pos = ecs_field(rows, EcsPosition2D, 1, 0);
+    EcsPosition2D *player_pos = ecs_field(rows, EcsPosition2D, 2, 0);
+    EcsPosition2D *ai_pos = ecs_field(rows, EcsPosition2D, 3, 0);
 
     /* On which side is the player? Aim to hit the ball at the point of my paddle
      * that will send it to the opposite corner. */
@@ -67,7 +67,7 @@ void AiThink(ecs_rows_t *rows) {
         ? (float)PLAYER_WIDTH / 2.5 + BALL_RADIUS
         : -(float)PLAYER_WIDTH / 2.5 + BALL_RADIUS );
 
-    *ecs_field(rows, Target, 0, 4) = target_x - ai_pos->x;
+    *ecs_field(rows, Target, 4, 0) = target_x - ai_pos->x;
 }
 
 void MovePaddle(ecs_rows_t *rows) {
@@ -98,8 +98,8 @@ void Collision(ecs_rows_t *rows) {
     ecs_type_t TEcsPosition2D = ecs_column_type(rows, 2); 
 
     /* There is only one ball which it has been passed in as a single (shared) component */
-    EcsPosition2D *p_ball = ecs_shared(rows, EcsPosition2D, 2);
-    EcsVelocity2D *v_ball = ecs_shared(rows, EcsVelocity2D, 3);
+    ECS_COLUMN(rows, EcsPosition2D, p_ball, 1);
+    ECS_COLUMN(rows, EcsVelocity2D, v_ball, 2);
 
     for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
     /* Create game entities. Override the target component from the prefab, 
      * which will copy the initialized value to the entity */
     ECS_ENTITY(world, Ball, EcsCollider);
-    ECS_ENTITY(world, Player, PaddlePrefab, Target);
-    ECS_ENTITY(world, AI, PaddlePrefab, Target);
+    ECS_ENTITY(world, Player, INSTANCEOF | PaddlePrefab, Target);
+    ECS_ENTITY(world, AI, INSTANCEOF | PaddlePrefab, Target);
 
     /* Handle player (keyboard) input and AI */
     ECS_SYSTEM(world, PlayerInput, EcsOnUpdate, EcsInput, Player.Target);
