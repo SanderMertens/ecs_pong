@@ -98,8 +98,8 @@ void Collision(ecs_rows_t *rows) {
     ecs_type_t TEcsPosition2D = ecs_column_type(rows, 2); 
 
     /* There is only one ball which it has been passed in as a single (shared) component */
-    ECS_COLUMN(rows, EcsPosition2D, p_ball, 1);
-    ECS_COLUMN(rows, EcsVelocity2D, v_ball, 2);
+    ECS_COLUMN(rows, EcsPosition2D, p_ball, 2);
+    ECS_COLUMN(rows, EcsVelocity2D, v_ball, 3);
 
     for (int i = 0; i < rows->count; i ++) {
         /* Move the ball out of the paddle */
